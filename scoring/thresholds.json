@@ -1,0 +1,72 @@
+{
+  "generated": "2026-11-03T20:41:19.273Z",
+  "method": "Compared with all NYC tax lots with 3+ residential units (PLUTO). percentile mode: A ≤ 40th percentile, B ≤ 65th, C ≤ 85th, D ≤ 95th, F above. none-or-some mode (used when 40%+ of buildings have none): A = none on record; buildings with any are B ≤ their 50th percentile, C ≤ 75th, D ≤ 90th, F above. Rates are per residential unit (evictions per 100 units; bedbugs = share of unit-years reported infested).",
+  "windowsYears": {
+    "violations": 3,
+    "complaints": 2,
+    "bedbugs": 3,
+    "evictions": 3,
+    "court": 5
+  },
+  "population": {
+    "violations": 172485,
+    "complaints": 172485,
+    "evictions": 172485,
+    "court": 172485,
+    "bedbugs": 109820
+  },
+  "modes": {
+    "violations": {
+      "mode": "percentile",
+      "shareWithNone": 0.303
+    },
+    "complaints": {
+      "mode": "none-or-some",
+      "shareWithNone": 0.677
+    },
+    "evictions": {
+      "mode": "none-or-some",
+      "shareWithNone": 0.905
+    },
+    "court": {
+      "mode": "none-or-some",
+      "shareWithNone": 0.896
+    },
+    "bedbugs": {
+      "mode": "none-or-some",
+      "shareWithNone": 0.946
+    }
+  },
+  "cutoffs": {
+    "violations": [
+      0.3333,
+      1.2,
+      2.3333,
+      9.5
+    ],
+    "complaints": [
+      0,
+      0.35,
+      1,
+      2.087
+    ],
+    "evictions": [
+      0,
+      6.25,
+      16.6667,
+      33.3333
+    ],
+    "court": [
+      0,
+      0.1111,
+      0.2667,
+      0.6667
+    ],
+    "bedbugs": [
+      0,
+      0.0139,
+      0.0417,
+      0.2
+    ]
+  }
+}

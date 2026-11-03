@@ -1,0 +1,30 @@
+name: Recalculate grade cutoffs
+
+on:
+  schedule:
+    - cron: '41 7 1 * *'   # monthly
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  calibrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Compare every NYC rental building
+        env:
+          SODA_APP_TOKEN: ${{ secrets.SODA_APP_TOKEN }}
+        run: node scripts/calibrate.mjs
+      - name: Save new cutoffs
+        run: |
+          git config user.name "rental-scores-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git pull --rebase
+          git add scoring/thresholds.json
+          git diff --cached --quiet || (git commit -m "Recalculate grade cutoffs" && git push)

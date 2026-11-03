@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NYC Rental Scores</title>
+<meta name="description" content="New York City rental listings, each graded A–F on its building's public record: violations, bedbugs, evictions, complaints and the landlord's housing-court history.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #16181d; --muted: #5d6470; --line: #e3e5e9; --bg: #f6f5f1; --card: #fff; --accent: #1d4ed8;
+    --A: #1f8a4c; --B: #6aa121; --C: #d39b0a; --D: #e0661b; --F: #c8262f; --none: #9aa0a8;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 Inter, system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+  a { color: var(--accent); }
+  header { background: var(--ink); color: #fff; padding: 28px 20px 24px; }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font: 800 30px/1.1 Archivo, sans-serif; margin: 0 0 6px; letter-spacing: -0.01em; }
+  h1 span { color: #ffd23f; }
+  header p { margin: 0; color: #c9ccd2; max-width: 640px; }
+  .lookup { display: flex; gap: 8px; margin-top: 18px; max-width: 640px; }
+  .lookup input { flex: 1; padding: 12px 14px; border-radius: 8px; border: 0; font: inherit; }
+  button { font: 600 14px Inter, sans-serif; padding: 10px 16px; border-radius: 8px; border: 0; cursor: pointer; background: #ffd23f; color: var(--ink); }
+  button.ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+  main { padding: 20px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .filters label { display: flex; flex-direction: column; font-size: 12px; color: var(--muted); gap: 4px; }
+  .filters select, .filters input { font: inherit; padding: 7px 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff; min-width: 110px; }
+  .more { width: 100%; display: none; gap: 10px; flex-wrap: wrap; padding-top: 6px; border-top: 1px dashed var(--line); }
+  .more.open { display: flex; }
+  .status { color: var(--muted); margin: 14px 2px; font-size: 13px; }
+  .grid { align-items: start; display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .top { display: flex; gap: 12px; align-items: flex-start; }
+  .big { flex: none; width: 58px; height: 62px; border-radius: 10px; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font: 800 28px/1 Archivo, sans-serif; }
+  .big small { display: block; font: 600 8px/1 Inter, sans-serif; letter-spacing: .08em; text-transform: uppercase; opacity: .9; margin-top: 5px; }
+  .addr { font: 700 16px/1.25 Archivo, sans-serif; }
+  .meta { color: var(--muted); font-size: 13px; }
+  .price { font: 700 18px Archivo, sans-serif; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px 2px 3px; background: #fafafa; }
+  .chip b { width: 20px; height: 20px; border-radius: 50%; color: #fff; display: grid; place-items: center; font-size: 11px; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
+  details summary { cursor: pointer; color: var(--accent); font-size: 13px; }
+  .facts { margin: 8px 0 0; padding: 0; list-style: none; font-size: 13px; display: grid; gap: 6px; }
+  .facts li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; }
+  .facts li b { width: 22px; height: 22px; border-radius: 5px; color: #fff; display: grid; place-items: center; font-size: 12px; }
+  .note { font-size: 12px; color: var(--muted); }
+  .result { margin-top: 18px; max-width: 640px; color: var(--ink); }
+  .empty { background: var(--card); border: 1px dashed var(--line); border-radius: 12px; padding: 28px; text-align: center; color: var(--muted); }
+  section.about { margin-top: 36px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  section.about h2 { font: 700 18px Archivo, sans-serif; margin: 0 0 8px; }
+  .about table { border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  .about td, .about th { border-bottom: 1px solid var(--line); padding: 6px 10px 6px 0; text-align: left; vertical-align: top; }
+  footer { color: var(--muted); font-size: 12px; text-align: center; padding: 24px; }
+  @media (max-width: 520px) { h1 { font-size: 25px; } .lookup { flex-direction: column; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>NYC Rental <span>Scores</span></h1>
+    <p>New rental listings, each graded A–F on its building's public record: violations, bedbugs, evictions, tenant complaints and the landlord's housing-court history.</p>
+    <form class="lookup" id="lookup">
+      <input id="lookup-input" placeholder="Check any building: e.g. 201 West 70th Street, Manhattan" aria-label="Address to check" autocomplete="street-address">
+      <button type="submit">Grade it</button>
+    </form>
+    <div class="result" id="lookup-result"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <form class="filters" id="filters" onsubmit="return false">
+    <label>Borough
+      <select id="f-boro"><option value="">All</option><option>Manhattan</option><option>Brooklyn</option><option>Queens</option><option>Bronx</option><option>Staten Island</option></select>
+    </label>
+    <label>Max rent <input id="f-price" type="number" min="0" step="100" placeholder="Any"></label>
+    <label>Bedrooms
+      <select id="f-beds"><option value="">Any</option><option value="0">Studio+</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option></select>
+    </label>
+    <label>Overall grade
+      <select id="f-overall" class="min-grade"><option value="">Any</option><option value="A">A only</option><option value="B">B or better</option><option value="C">C or better</option><option value="D">D or better</option></select>
+    </label>
+    <label>Sort
+      <select id="f-sort"><option value="new">Newest</option><option value="grade">Best grade</option><option value="price">Lowest rent</option></select>
+    </label>
+    <button type="button" class="ghost" id="more-btn">More grade filters</button>
+    <div class="more" id="more"></div>
+  </form>
+
+  <p class="status" id="status">Loading listings…</p>
+  <div class="grid" id="grid"></div>
+
+  <section class="about" id="about">
+    <h2>How the grades work</h2>
+    <p>Each listing's building is matched to the city's records by its tax lot (BBL). Every number comes from NYC Open Data. Problems are counted per apartment, then compared with all <span id="pop">170,000+</span> NYC buildings that have 3 or more apartments:</p>
+    <p><b>Violations:</b> A best 40% · B next 25% · C next 20% · D next 10% · F worst 5%.<br>
+    <b>Bedbugs, evictions, complaints, landlord record:</b> most buildings have none, so <b>A</b> means none on record. Buildings with any are split: B lower half · C next 25% · D next 15% · F worst 10%.</p>
+    <table id="method-table"></table>
+    <p class="note">The overall grade weighs violations 30%, bedbugs 20%, evictions 20%, complaints 15%, landlord record 15%. A failing grade in any category caps the overall grade at C. Buildings in the city's Alternative Enforcement Program (its list of the most distressed buildings) get an F for landlord record. Bedbug figures are reported by owners themselves. Large complexes are graded as a whole. Grades describe public records, not the condition of any one apartment. Always check the listing and visit in person.</p>
+    <p class="note" id="calibrated"></p>
+  </section>
+</main>
+<footer>Data: NYC Department of Housing Preservation and Development, NYC Marshals, Department of City Planning (PLUTO, GeoSearch) via NYC Open Data. Listing details link back to the original site.</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>
